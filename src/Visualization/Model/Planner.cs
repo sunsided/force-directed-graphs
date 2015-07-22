@@ -47,29 +47,13 @@ namespace widemeadows.Graphs.Model
                 // iterate over all vertices ...
                 foreach (var vertex in graph.Vertices) // TODO: if we directly loop over edges, can we cut loops by 1/2?
                 {
-                    // we initialize the net force to zero
-                    var netForce = Vector.Zero;
-
                     // obtain the vertex location
                     var locationOf = currentLocations[vertex];
 
-                    // ... and process against all other vertices
-                    foreach (var other in graph.Vertices)
-                    {
-                        // skip self to prevent numerical instabilities
-                        if (other.Equals(vertex)) continue;
-
-                        // obtain the other vertex' location
-                        var locationFrom = currentLocations[other];
-
-http://www.brad-smith.info/blog/archives/129
-
-                        // calculate the forces
-                        var repulsionForce = GetRepulsionForce(locationOf, locationFrom);
-                        var attractionForce = GetAttractionForce(graph, vertex, locationOf, other, locationFrom);
-                        netForce += repulsionForce;
-                        netForce += attractionForce;
-                    }
+                    // and process against all other vertices
+                    var netForce = Vector.Zero;
+                    netForce += CalculateTotalRepulsion(graph, vertex, locationOf, currentLocations);
+                    netForce += CalculateTotalAttraction(graph, vertex, locationOf, currentLocations);
 
                     // finally, update the vertex' position
                     locationOf += netForce;
@@ -90,6 +74,44 @@ http://www.brad-smith.info/blog/archives/129
             }
 
             return currentLocations;
+        }
+
+        /// <summary>
+        /// Calculates the total repulsion force.
+        /// </summary>
+        /// <param name="graph">The graph.</param>
+        /// <param name="vertex">The vertex.</param>
+        /// <param name="vertexLocation"></param>
+        /// <param name="currentLocations">The current locations.</param>
+        /// <returns>Vector.</returns>
+        private static Vector CalculateTotalRepulsion([NotNull] Graph graph, Vertex vertex, Location vertexLocation, [NotNull] IReadOnlyDictionary<Vertex, Location> currentLocations)
+        {
+            var forces =
+                from other in graph.Vertices
+                where !other.Equals(vertex)
+                let otherLocation = currentLocations[other]
+                select GetRepulsionForce(vertexLocation, otherLocation);
+            var force = forces.Aggregate(Vector.Zero, (current, sumOfForces) => sumOfForces + current);
+            return force;
+        }
+
+        /// <summary>
+        /// Calculates the total attraction force.
+        /// </summary>
+        /// <param name="graph">The graph.</param>
+        /// <param name="vertex">The vertex.</param>
+        /// <param name="vertexLocation"></param>
+        /// <param name="currentLocations">The current locations.</param>
+        /// <returns>Vector.</returns>
+        private static Vector CalculateTotalAttraction([NotNull] Graph graph, Vertex vertex, Location vertexLocation, [NotNull] IReadOnlyDictionary<Vertex, Location> currentLocations)
+        {
+            var forces =
+                from edges in graph[vertex]
+                let other = edges.Other(vertex)
+                let otherLocation = currentLocations[other]
+                select GetAttractionForce(graph, vertex, vertexLocation, other, otherLocation);
+            var force = forces.Aggregate(Vector.Zero, (current, sumOfForces) => sumOfForces + current);
+            return force;
         }
 
         /// <summary>
