@@ -16,7 +16,7 @@ namespace widemeadows.Graphs
             var network = CreateGraph();
 
             var planner = new Planner();
-            planner.Plan(network);
+            var locations = planner.Plan(network);
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -29,10 +29,10 @@ namespace widemeadows.Graphs
         /// <returns>IReadOnlyCollection&lt;Vertex&gt;.</returns>
         private static Graph CreateGraph()
         {
-            var a = new Vertex();
-            var b = new Vertex();
-            var c = new Vertex();
-            var d = new Vertex();
+            var a = new Vertex<string>("a");
+            var b = new Vertex<string>("b");
+            var c = new Vertex<string>("c");
+            var d = new Vertex<string>("d");
 
             var ab = new Edge(a, b, 1.0D);
             var ac = new Edge(a, c, 1.0D);

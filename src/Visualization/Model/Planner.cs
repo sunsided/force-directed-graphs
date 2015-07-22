@@ -29,7 +29,8 @@ namespace widemeadows.Graphs.Model
         /// Plans the specified graph.
         /// </summary>
         /// <param name="graph">The graph.</param>
-        public void Plan([NotNull] Graph graph)
+        [NotNull]
+        public IReadOnlyDictionary<Vertex, Location> Plan([NotNull] Graph graph)
         {
             // create initial random locations for each vertex
             var currentLocations = CreateRandomLocations(graph);
@@ -87,6 +88,8 @@ http://www.brad-smith.info/blog/archives/129
                     currentLocations[location.Key] = location.Value - center;
                 }
             }
+
+            return currentLocations;
         }
 
         /// <summary>
@@ -95,7 +98,7 @@ http://www.brad-smith.info/blog/archives/129
         /// <param name="graph">The graph.</param>
         /// <returns>ILookup&lt;Vertex, Location&gt;.</returns>
         [NotNull]
-        private static IDictionary<Vertex, Location> CreateRandomLocations([NotNull] Graph graph)
+        private static Dictionary<Vertex, Location> CreateRandomLocations([NotNull] Graph graph)
         {
             var random = new Random();
             var initialLocations = graph.Vertices.ToDictionary(v => v, v => new Location(random.NextDouble(), random.NextDouble()));

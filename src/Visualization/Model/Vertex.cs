@@ -6,7 +6,7 @@ namespace widemeadows.Graphs.Model
     /// <summary>
     /// Class Vertex.
     /// </summary>
-    public sealed class Vertex : IEquatable<Vertex>
+    public class Vertex : IEquatable<Vertex>
     {
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.

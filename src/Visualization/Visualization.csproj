@@ -53,6 +53,7 @@
     <Compile Include="Model\Vector.cs" />
     <Compile Include="Model\Location.cs" />
     <Compile Include="Model\Planner.cs" />
+    <Compile Include="Model\VertexT.cs" />
     <Compile Include="Model\Vertex.cs" />
     <Compile Include="Visualization\MainForm.cs">
       <SubType>Form</SubType>
