@@ -152,23 +152,19 @@ namespace widemeadows.Graphs.Visualization
         /// <param name="edgePen">The edge pen.</param>
         private static void RenderEdges(IReadOnlyDictionary<Vertex, Location> locations, Graph network, float centerX, float centerY, Graphics gr, Pen edgePen)
         {
-            foreach (var pair in locations)
+            foreach (var edge in network.Edges)
             {
-                var edges = network[pair.Key];
-                foreach (var edge in edges)
-                {
-                    var startLocation = locations[edge.Left];
-                    var endLocation = locations[edge.Right];
+                var startLocation = locations[edge.Left];
+                var endLocation = locations[edge.Right];
 
-                    var start = new PointF(
-                        (float) startLocation.X + centerX,
-                        (float) startLocation.Y + centerY);
-                    var end = new PointF(
-                        (float) endLocation.X + centerX,
-                        (float) endLocation.Y + centerY);
+                var start = new PointF(
+                    (float) startLocation.X + centerX,
+                    (float) startLocation.Y + centerY);
+                var end = new PointF(
+                    (float) endLocation.X + centerX,
+                    (float) endLocation.Y + centerY);
 
-                    gr.DrawLine(edgePen, start, end);
-                }
+                gr.DrawLine(edgePen, start, end);
             }
         }
 
