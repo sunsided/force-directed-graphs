@@ -14,16 +14,22 @@ namespace widemeadows.Graphs.Visualization
     public partial class MainForm : Form
     {
         /// <summary>
+        /// The network replacement lock object
+        /// </summary>
+        [NotNull]
+        private readonly object _networkReplaceLock = new object();
+
+        /// <summary>
         /// The network
         /// </summary>
         [NotNull]
-        private readonly Graph _network;
+        private Graph _network;
 
         /// <summary>
         /// The locations
         /// </summary>
         [NotNull]
-        private readonly IReadOnlyDictionary<Vertex, Location> _locations;
+        private IReadOnlyDictionary<Vertex, Location> _locations;
 
         /// <summary>
         /// The basic scale
@@ -51,18 +57,37 @@ namespace widemeadows.Graphs.Visualization
         private Point _translateInPixels;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MainForm"/> class.
+        /// Occurs when a new seed is requested.
         /// </summary>
-        /// <param name="network"></param>
+        public event EventHandler NewSeed;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainForm" /> class.
+        /// </summary>
+        /// <param name="network">The network.</param>
         /// <param name="locations">The locations.</param>
-        public MainForm(Graph network, [NotNull] IReadOnlyDictionary<Vertex, Location> locations)
+        // ReSharper disable once NotNullMemberIsNotInitialized
+        public MainForm([NotNull] Graph network, [NotNull] IReadOnlyDictionary<Vertex, Location> locations)
         {
-            _network = network;
-            _locations = locations;
-
+            SetNetwork(network, locations);
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.DoubleBuffer | ControlStyles.OptimizedDoubleBuffer | ControlStyles.Opaque, true);
-
             InitializeComponent();
+        }
+
+        /// <summary>
+        /// Sets the specified network.
+        /// </summary>
+        /// <param name="network">The network.</param>
+        /// <param name="locations">The locations.</param>
+        public void SetNetwork([NotNull] Graph network, [NotNull] IReadOnlyDictionary<Vertex, Location> locations)
+        {
+            lock (_networkReplaceLock)
+            {
+                _network = network;
+                _locations = locations;
+
+                Invalidate();
+            }
         }
 
         /// <summary>
@@ -73,8 +98,14 @@ namespace widemeadows.Graphs.Visualization
         {
             base.OnPaint(e);
 
-            var network = _network;
-            var locations = _locations;
+            // obtain the graph and the locations
+            Graph network;
+            IReadOnlyDictionary<Vertex, Location> locations;
+            lock (_networkReplaceLock)
+            {
+                network = _network;
+                locations = _locations;
+            }
 
             var gr = e.Graphics;
 
@@ -254,6 +285,25 @@ namespace widemeadows.Graphs.Visualization
             _translateInPixels = new Point();
             _scale = BaseScale;
             Refresh();
+        }
+
+        /// <summary>
+        /// Handles the Click event of the buttonRestart control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        private void buttonRestart_Click(object sender, EventArgs e)
+        {
+            OnNewSeed();
+        }
+
+        /// <summary>
+        /// Called when a new seed is requested.
+        /// </summary>
+        protected virtual void OnNewSeed()
+        {
+            var handler = NewSeed;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
     }
 }

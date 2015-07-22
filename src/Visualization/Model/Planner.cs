@@ -45,7 +45,7 @@ namespace widemeadows.Graphs.Model
                 var newLocations = new Dictionary<Vertex, Location>(currentLocations);
 
                 // iterate over all vertices ...
-                foreach (var vertex in graph.Vertices) // TODO: if we directly loop over edges, can we cut loops by 1/2?
+                foreach (var vertex in graph.Vertices)
                 {
                     // obtain the vertex location
                     var locationOf = currentLocations[vertex];
@@ -53,7 +53,7 @@ namespace widemeadows.Graphs.Model
                     // and process against all other vertices
                     var netForce = Vector.Zero;
                     netForce += CalculateTotalRepulsion(graph, vertex, locationOf, currentLocations);
-                    netForce += CalculateTotalAttraction(graph, vertex, locationOf, currentLocations);
+                    netForce += CalculateTotalAttraction(graph, vertex, locationOf, currentLocations); // TODO: make use of force symmetry along edges here
 
                     // finally, update the vertex' position
                     locationOf += netForce;
