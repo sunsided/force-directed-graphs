@@ -26,7 +26,7 @@ namespace widemeadows.Graphs
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            Application.Run(new MainForm(locations));
         }
 
         /// <summary>
@@ -45,7 +45,10 @@ namespace widemeadows.Graphs
             var cd = new Edge(c, d, 1.0D);
             var bd = new Edge(b, d, 1.0D);
 
-            return new Graph(ab, ac, cd, bd);
+            var ad = new Edge(a, d, Math.Sqrt(2));
+            var bc = new Edge(b, c, Math.Sqrt(2));
+
+            return new Graph(ab, ac, cd, bd/*, ad, bc*/);
         }
     }
 }
