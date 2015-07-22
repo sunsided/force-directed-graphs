@@ -178,13 +178,7 @@ namespace widemeadows.Graphs.Model
             // too short and should thus expand; hence the attraction force is zero.
             // If the expected distance is smaller than the current distance, the spring needs
             // to contract, hence the strength is positive.
-#if true
             var strength = attractionStrength * Math.Max(currentDistance - expectedDistance, 0);
-#else
-            var c1 = 2D;
-            var c2 = 1D;
-            var strength = c1 * Math.Log(currentDistance / c2);
-#endif
 
             // In order to contract, we reverse the force direction
             return direction*(-strength);
