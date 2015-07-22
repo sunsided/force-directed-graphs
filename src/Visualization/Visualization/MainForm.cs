@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using widemeadows.Graphs.Model;
@@ -57,9 +59,41 @@ namespace widemeadows.Graphs.Visualization
         private Point _translateInPixels;
 
         /// <summary>
+        /// The value range of the current network's edges
+        /// </summary>
+        private Range _edgeRange;
+
+        /// <summary>
         /// Occurs when a new seed is requested.
         /// </summary>
         public event EventHandler NewSeed;
+
+        /// <summary>
+        /// Struct Range
+        /// </summary>
+        private struct Range
+        {
+            /// <summary>
+            /// The minimum
+            /// </summary>
+            public readonly double Min;
+
+            /// <summary>
+            /// The maximum
+            /// </summary>
+            public readonly double Max;
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="Range"/> struct.
+            /// </summary>
+            /// <param name="min">The minimum.</param>
+            /// <param name="max">The maximum.</param>
+            public Range(double min, double max)
+            {
+                Min = min;
+                Max = max;
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainForm" /> class.
@@ -86,8 +120,19 @@ namespace widemeadows.Graphs.Visualization
                 _network = network;
                 _locations = locations;
 
-                Invalidate();
+                // determine the edge weight range
+                _edgeRange = _network.Edges.Aggregate(
+                    new Range(
+                        min: Double.PositiveInfinity,
+                        max: Double.NegativeInfinity),
+                    (minmax, current) =>
+                        new Range(
+                            min: Math.Min(minmax.Min, current.Weight),
+                            max: Math.Max(minmax.Max, current.Weight)
+                            ));
             }
+
+            Invalidate();
         }
 
         /// <summary>
@@ -115,8 +160,10 @@ namespace widemeadows.Graphs.Visualization
             var offsetX = _translateInPixels.X;
             var offsetY = _translateInPixels.Y;
 
+            // edge value range
+            var range = _edgeRange;
+
             // colorful things
-            var edgePen = new Pen(Color.DarkSlateGray, 0.1F);
             var vertexBrush = new SolidBrush(Color.SteelBlue);
 
             // push the graphics state
@@ -131,7 +178,7 @@ namespace widemeadows.Graphs.Visualization
                 gr.ScaleTransform(scale, scale);
                 gr.Clear(Color.WhiteSmoke);
 
-                RenderEdges(locations, network, centerX, centerY, gr, edgePen);
+                RenderEdges(locations, network, centerX, centerY, gr, range);
                 RenderVertices(locations, centerX, centerY, gr, vertexBrush);
             }
             finally
@@ -150,10 +197,11 @@ namespace widemeadows.Graphs.Visualization
         /// <param name="centerY">The center y.</param>
         /// <param name="gr">The gr.</param>
         /// <param name="edgePen">The edge pen.</param>
-        private static void RenderEdges(IReadOnlyDictionary<Vertex, Location> locations, Graph network, float centerX, float centerY, Graphics gr, Pen edgePen)
+        private static void RenderEdges(IReadOnlyDictionary<Vertex, Location> locations, Graph network, float centerX, float centerY, Graphics gr, Range range)
         {
             foreach (var edge in network.Edges)
             {
+                // determine the line start and end coordinates
                 var startLocation = locations[edge.Left];
                 var endLocation = locations[edge.Right];
 
@@ -164,8 +212,34 @@ namespace widemeadows.Graphs.Visualization
                     (float) endLocation.X + centerX,
                     (float) endLocation.Y + centerY);
 
+                // colorful things
+                var edgeColor = LerpColor(Color.DarkSlateGray, Color.OrangeRed, edge.Weight, range);
+                var edgePen = new Pen(edgeColor, 0.1F);
+
+                // actually do something
                 gr.DrawLine(edgePen, start, end);
             }
+        }
+
+        /// <summary>
+        /// Linearly interpolates the color.
+        /// </summary>
+        /// <param name="lowColor">Color of the low.</param>
+        /// <param name="highColor">Color of the high.</param>
+        /// <param name="weight">The weight.</param>
+        /// <param name="range">The range.</param>
+        /// <returns>Color.</returns>
+        private static Color LerpColor(Color lowColor, Color highColor, double weight, Range range)
+        {
+            double normalizedValue = (weight - range.Min)/(range.Max - range.Min);
+
+            var a = (normalizedValue)*highColor.A + (1.0D - normalizedValue)*lowColor.A;
+            var r = (normalizedValue)*highColor.R + (1.0D - normalizedValue)*lowColor.R;
+            var g = (normalizedValue)*highColor.G + (1.0D - normalizedValue)*lowColor.G;
+            var b = (normalizedValue)*highColor.B + (1.0D - normalizedValue)*lowColor.B;
+
+            var color = Color.FromArgb((int)a, (int)r, (int)g, (int)b);
+            return color;
         }
 
         /// <summary>
