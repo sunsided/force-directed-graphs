@@ -40,7 +40,7 @@ namespace widemeadows.Graphs.Visualization
             var centerX = ClientRectangle.Width/2 + ClientRectangle.Left/2;
             var centerY = ClientRectangle.Height/2 + ClientRectangle.Top/2;
             var scale = 10F;
-            var width = 2F;
+            var width = 1F;
 
             var locations = _locations;
             foreach (var pair in locations)
@@ -52,7 +52,7 @@ namespace widemeadows.Graphs.Visualization
                     (float) location.Y*scale - scale*width/2F + centerY,
                     width*scale,
                     width*scale);
-                gr.DrawEllipse(new Pen(Color.DarkBlue), rect);
+                gr.FillEllipse(new SolidBrush(Color.DarkBlue), rect);
             }
         }
 
