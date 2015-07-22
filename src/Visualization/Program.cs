@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 using widemeadows.Graphs.Model;
 using widemeadows.Graphs.Visualization;
@@ -17,6 +18,11 @@ namespace widemeadows.Graphs
 
             var planner = new Planner();
             var locations = planner.Plan(network);
+
+            var a = locations.Single(pair => ((Vertex<string>) pair.Key).Data == "a").Value;
+            var b = locations.Single(pair => ((Vertex<string>) pair.Key).Data == "b").Value;
+            var c = locations.Single(pair => ((Vertex<string>) pair.Key).Data == "c").Value;
+            var d = locations.Single(pair => ((Vertex<string>) pair.Key).Data == "d").Value;
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
