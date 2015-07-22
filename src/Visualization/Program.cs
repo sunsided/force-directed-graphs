@@ -39,16 +39,17 @@ namespace widemeadows.Graphs
             var b = new Vertex<string>("b");
             var c = new Vertex<string>("c");
             var d = new Vertex<string>("d");
+            var e = new Vertex<string>("e");
+            var f = new Vertex<string>("f");
 
-            var ab = new Edge(a, b, 1.0D);
-            var ac = new Edge(a, c, 1.0D);
+            var ab = new Edge(a, b, 5.0D);
+            var bc = new Edge(b, c, 1.0D);
             var cd = new Edge(c, d, 1.0D);
-            var bd = new Edge(b, d, 1.0D);
+            var de = new Edge(d, e, 1.0D);
+            var ef = new Edge(e, f, 1.0D);
+            var fa = new Edge(f, a, 1.0D);
 
-            var ad = new Edge(a, d, Math.Sqrt(2));
-            var bc = new Edge(b, c, Math.Sqrt(2));
-
-            return new Graph(ab, ac, cd, bd/*, ad, bc*/);
+            return new Graph(ab, bc, cd, de, ef, fa);
         }
     }
 }
