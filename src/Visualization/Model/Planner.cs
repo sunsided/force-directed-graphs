@@ -11,6 +11,11 @@ namespace widemeadows.Graphs.Model
     public class Planner
     {
         /// <summary>
+        /// The node displacement termination threshold
+        /// </summary>
+        private const double _terminationThreshold = 1E-8D;
+
+        /// <summary>
         /// The repulsion strength between two unconnected vertices
         /// </summary>
         private const double VertexRepulsionForceStrength = 2D;
@@ -36,6 +41,7 @@ namespace widemeadows.Graphs.Model
             var currentLocations = CreateRandomLocations(graph);
 
             // loop until the number of iterations exceeds the hard limit
+            const double terminationThreshold = _terminationThreshold * _terminationThreshold;
             for (var i = 0; i < MaximumIterations; ++i)
             {
                 // the total displacement, used as a stop condition
@@ -71,6 +77,9 @@ namespace widemeadows.Graphs.Model
                 {
                     currentLocations[location.Key] = location.Value - center;
                 }
+
+                // early exit if nodes don't move much anymore
+                if (totalDisplacement < terminationThreshold) break;
             }
 
             return currentLocations;
