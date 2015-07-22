@@ -26,7 +26,7 @@ namespace widemeadows.Graphs
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm(locations));
+            Application.Run(new MainForm(network, locations));
         }
 
         /// <summary>
@@ -35,21 +35,31 @@ namespace widemeadows.Graphs
         /// <returns>IReadOnlyCollection&lt;Vertex&gt;.</returns>
         private static Graph CreateGraph()
         {
+            /*
+                A
+              B   C
+               D E
+             */
+
             var a = new Vertex<string>("a");
             var b = new Vertex<string>("b");
             var c = new Vertex<string>("c");
             var d = new Vertex<string>("d");
             var e = new Vertex<string>("e");
-            var f = new Vertex<string>("f");
-
-            var ab = new Edge(a, b, 5.0D);
-            var bc = new Edge(b, c, 1.0D);
-            var cd = new Edge(c, d, 1.0D);
-            var de = new Edge(d, e, 1.0D);
-            var ef = new Edge(e, f, 1.0D);
-            var fa = new Edge(f, a, 1.0D);
-
-            return new Graph(ab, bc, cd, de, ef, fa);
+            return new Graph(
+                // inner connections
+                new Edge(b, c, 2.0D),
+                new Edge(c, d, 2.0D),
+                new Edge(d, a, 2.0D),
+                new Edge(a, e, 2.0D),
+                new Edge(e, b, 2.0D),
+                // outer connections
+                new Edge(a, c, 1.0D),
+                new Edge(c, e, 1.0D),
+                new Edge(e, d, 1.0D),
+                new Edge(d, b, 1.0D),
+                new Edge(b, a, 1.0D)
+                );
         }
     }
 }
