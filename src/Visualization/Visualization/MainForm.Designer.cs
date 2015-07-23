@@ -34,6 +34,7 @@
             // buttonRestart
             // 
             this.buttonRestart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonRestart.Enabled = false;
             this.buttonRestart.Location = new System.Drawing.Point(537, 406);
             this.buttonRestart.Name = "buttonRestart";
             this.buttonRestart.Size = new System.Drawing.Size(75, 23);
@@ -48,6 +49,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 441);
             this.Controls.Add(this.buttonRestart);
+            this.DoubleBuffered = true;
             this.MinimumSize = new System.Drawing.Size(200, 200);
             this.Name = "MainForm";
             this.Text = "Force-Directed Graph Drawing";

@@ -103,8 +103,17 @@ namespace widemeadows.Graphs.Visualization
         // ReSharper disable once NotNullMemberIsNotInitialized
         public MainForm([NotNull] Graph network, [NotNull] IReadOnlyDictionary<Vertex, Location> locations)
         {
-            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.DoubleBuffer | ControlStyles.OptimizedDoubleBuffer | ControlStyles.Opaque, true);
+            SetStyle(
+                ControlStyles.AllPaintingInWmPaint |
+                ControlStyles.DoubleBuffer |
+                ControlStyles.OptimizedDoubleBuffer |
+                ControlStyles.Opaque |
+                ControlStyles.UserPaint,
+                true);
             InitializeComponent();
+
+            // mouse wheel passthrough for zooming while hovering over the button
+            buttonRestart.MouseWheel += (sender, args) => OnMouseWheel(args);
 
             SetNetwork(network, locations);
         }
@@ -372,6 +381,10 @@ namespace widemeadows.Graphs.Visualization
         {
             // disable the button
             buttonRestart.Enabled = false;
+
+            // remove the focus so scrolling works as expected
+            Focus();
+
             OnNewSeed();
         }
 
