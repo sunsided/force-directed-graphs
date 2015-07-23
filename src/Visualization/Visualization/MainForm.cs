@@ -103,9 +103,10 @@ namespace widemeadows.Graphs.Visualization
         // ReSharper disable once NotNullMemberIsNotInitialized
         public MainForm([NotNull] Graph network, [NotNull] IReadOnlyDictionary<Vertex, Location> locations)
         {
-            SetNetwork(network, locations);
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.DoubleBuffer | ControlStyles.OptimizedDoubleBuffer | ControlStyles.Opaque, true);
             InitializeComponent();
+
+            SetNetwork(network, locations);
         }
 
         /// <summary>
@@ -130,6 +131,9 @@ namespace widemeadows.Graphs.Visualization
                             min: Math.Min(minmax.Min, current.Weight),
                             max: Math.Max(minmax.Max, current.Weight)
                             ));
+
+                // re-enable the button
+                buttonRestart.Enabled = true;
             }
 
             Invalidate();
@@ -277,7 +281,7 @@ namespace widemeadows.Graphs.Visualization
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-            Refresh();
+            Invalidate();
         }
 
         /// <summary>
@@ -297,7 +301,7 @@ namespace widemeadows.Graphs.Visualization
                 _scale *= 0.9F;
             }
 
-            Refresh();
+            Invalidate();
         }
 
         /// <summary>
@@ -342,7 +346,7 @@ namespace widemeadows.Graphs.Visualization
             _translateInPixels = new Point(
                 location.X - _locationAtMouseLeftDown.X,
                 location.Y - _locationAtMouseLeftDown.Y);
-            Refresh();
+            Invalidate();
         }
 
         /// <summary>
@@ -356,7 +360,7 @@ namespace widemeadows.Graphs.Visualization
 
             _translateInPixels = new Point();
             _scale = BaseScale;
-            Refresh();
+            Invalidate();
         }
 
         /// <summary>
@@ -366,6 +370,8 @@ namespace widemeadows.Graphs.Visualization
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void buttonRestart_Click(object sender, EventArgs e)
         {
+            // disable the button
+            buttonRestart.Enabled = false;
             OnNewSeed();
         }
 

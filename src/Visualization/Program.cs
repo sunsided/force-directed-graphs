@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using widemeadows.Graphs.Model;
 using widemeadows.Graphs.Visualization;
@@ -22,12 +23,16 @@ namespace widemeadows.Graphs
             Application.SetCompatibleTextRenderingDefault(false);
 
             var form = new MainForm(network, locations);
-            form.NewSeed += (s, a) =>
-                            {
-                                var newNetwork = CreateGraph();
-                                var newLocations = planner.Plan(newNetwork);
-                                form.SetNetwork(newNetwork, newLocations);
-                            };
+            form.NewSeed += async (s, a) =>
+                                  {
+                                      var result = await Task.Run(() =>
+                                                                  {
+                                                                      var newNetwork = CreateGraph();
+                                                                      var newLocations = planner.Plan(newNetwork);
+                                                                      return new {Network = newNetwork, Locations = newLocations};
+                                                                  });
+                                      form.SetNetwork(result.Network, result.Locations);
+                                  };
 
             Application.Run(form);
         }
