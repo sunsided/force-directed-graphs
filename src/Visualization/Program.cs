@@ -81,7 +81,7 @@ namespace widemeadows.Graphs
         /// <returns>Graph.</returns>
         private static Graph CreateGrid()
         {
-            const int rows = 10, columns = 10;
+            const int rows = 5, columns = 5;
 
             // create the vertices
             var grid = new Vertex[rows, columns];
@@ -103,7 +103,10 @@ namespace widemeadows.Graphs
                 {
                     var left = grid[row, column];
                     var right = grid[row, column + 1];
-                    var edge = new Edge(left, right, 1.0D);
+
+                    var weight = 1.5D * (row + column);
+
+                    var edge = new Edge(left, right, weight);
                     edges.Add(edge);
                 }
             }
@@ -115,7 +118,10 @@ namespace widemeadows.Graphs
                 {
                     var top = grid[row, column];
                     var bottom = grid[row+1, column];
-                    var edge = new Edge(top, bottom, 1.0D);
+
+                    var weight = 1.5D * (row + column);
+
+                    var edge = new Edge(top, bottom, weight);
                     edges.Add(edge);
                 }
             }
