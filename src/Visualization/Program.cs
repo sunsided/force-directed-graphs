@@ -37,6 +37,15 @@ namespace widemeadows.Graphs
         /// <returns>IReadOnlyCollection&lt;Vertex&gt;.</returns>
         private static Graph CreateGraph()
         {
+            return CreatePentagraph();
+        }
+
+        /// <summary>
+        /// Creates the pentagram-shaped graph.
+        /// </summary>
+        /// <returns>Graph.</returns>
+        private static Graph CreatePentagraph()
+        {
             /*
                 A
               B   C
