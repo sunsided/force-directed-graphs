@@ -13,7 +13,7 @@ namespace widemeadows.Graphs.Model
         /// <summary>
         /// The node displacement termination threshold
         /// </summary>
-        private const double _terminationThreshold = 1E-8D;
+        private const double TerminationThreshold = 1E-8D;
 
         /// <summary>
         /// The repulsion strength between two unconnected vertices
@@ -41,7 +41,7 @@ namespace widemeadows.Graphs.Model
             var currentLocations = CreateRandomLocations(graph);
 
             // loop until the number of iterations exceeds the hard limit
-            const double terminationThreshold = _terminationThreshold * _terminationThreshold;
+            const double terminationThreshold = TerminationThreshold * TerminationThreshold;
             for (var i = 0; i < MaximumIterations; ++i)
             {
                 // the total displacement, used as a stop condition
