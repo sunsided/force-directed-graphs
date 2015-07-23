@@ -231,6 +231,8 @@ namespace widemeadows.Graphs.Visualization
         /// <returns>Color.</returns>
         private static Color LerpColor(Color lowColor, Color highColor, double weight, Range range)
         {
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            if (range.Max == range.Min) return lowColor;
             double normalizedValue = (weight - range.Min)/(range.Max - range.Min);
 
             var a = (normalizedValue)*highColor.A + (1.0D - normalizedValue)*lowColor.A;
