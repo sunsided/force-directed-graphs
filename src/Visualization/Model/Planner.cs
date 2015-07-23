@@ -13,12 +13,12 @@ namespace widemeadows.Graphs.Model
         /// <summary>
         /// The node displacement termination threshold
         /// </summary>
-        private const double TerminationThreshold = 1E-8D;
+        private const double TerminationThreshold = 1E-4D;
 
         /// <summary>
         /// The repulsion strength between two unconnected vertices
         /// </summary>
-        private const double VertexRepulsionForceStrength = 10D;
+        private const double VertexRepulsionForceStrength = 5D;
 
         /// <summary>
         /// The attraction strength between two connected vertices
@@ -96,7 +96,7 @@ namespace widemeadows.Graphs.Model
         private static Vector CalculateTotalRepulsion([NotNull] Graph graph, Vertex vertex, Location vertexLocation, [NotNull] IReadOnlyDictionary<Vertex, Location> currentLocations)
         {
             var forces =
-                from other in graph.Vertices
+                from other in graph.Vertices.AsParallel()
                 where !other.Equals(vertex)
                 let otherLocation = currentLocations[other]
                 select GetRepulsionForce(vertexLocation, otherLocation);
@@ -115,7 +115,7 @@ namespace widemeadows.Graphs.Model
         private static Vector CalculateTotalAttraction([NotNull] Graph graph, Vertex vertex, Location vertexLocation, [NotNull] IReadOnlyDictionary<Vertex, Location> currentLocations)
         {
             var forces =
-                from edges in graph[vertex]
+                from edges in graph[vertex].AsParallel()
                 let other = edges.Other(vertex)
                 let otherLocation = currentLocations[other]
                 select GetAttractionForce(graph, vertex, vertexLocation, other, otherLocation);
