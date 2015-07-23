@@ -18,7 +18,7 @@ namespace widemeadows.Graphs.Model
         /// <summary>
         /// The repulsion strength between two unconnected vertices
         /// </summary>
-        private const double VertexRepulsionForceStrength = 2D;
+        private const double VertexRepulsionForceStrength = 10D;
 
         /// <summary>
         /// The attraction strength between two connected vertices
