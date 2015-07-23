@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Windows.Forms;
 using widemeadows.Graphs.Model;
 using widemeadows.Graphs.Visualization;
@@ -37,7 +38,8 @@ namespace widemeadows.Graphs
         /// <returns>IReadOnlyCollection&lt;Vertex&gt;.</returns>
         private static Graph CreateGraph()
         {
-            return CreatePentagraph();
+            // return CreatePentagraph();
+            return CreateGrid();
         }
 
         /// <summary>
@@ -71,6 +73,54 @@ namespace widemeadows.Graphs
                 new Edge(d, b, 1.0D),
                 new Edge(b, a, 1.0D)
                 );
+        }
+
+        /// <summary>
+        /// Creates the grid.
+        /// </summary>
+        /// <returns>Graph.</returns>
+        private static Graph CreateGrid()
+        {
+            const int rows = 10, columns = 10;
+
+            // create the vertices
+            var grid = new Vertex[rows, columns];
+            for (int row = 0; row < rows; ++row)
+            {
+                for (int column = 0; column < columns; ++column)
+                {
+                    grid[row, column] = new Vertex<string>(String.Format("{0},{1}", row, column));
+                }
+            }
+
+            // prepare the edge storage
+            var edges = new Collection<Edge>();
+
+            // link the vertices horizontally
+            for (int row = 0; row < rows; ++row)
+            {
+                for (int column = 0; column < columns - 1; ++column)
+                {
+                    var left = grid[row, column];
+                    var right = grid[row, column + 1];
+                    var edge = new Edge(left, right, 1.0D);
+                    edges.Add(edge);
+                }
+            }
+
+            // link the vertices vertically
+            for (int row = 0; row < rows - 1; ++row)
+            {
+                for (int column = 0; column < columns; ++column)
+                {
+                    var top = grid[row, column];
+                    var bottom = grid[row+1, column];
+                    var edge = new Edge(top, bottom, 1.0D);
+                    edges.Add(edge);
+                }
+            }
+
+            return new Graph(edges);
         }
     }
 }
